@@ -447,4 +447,49 @@
             });
         });
     </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure all elements are loaded before running the script
+            const fuelElement = document.getElementById('fuel');
+            const lateElement = document.getElementById('late');
+            const extendElement = document.getElementById('extend');
+            const extendStatusElement = document.getElementById('extend_status');
+            const returnAmountElement = document.getElementById('return_amount');
+
+            if (!fuelElement || !lateElement || !extendElement || !extendStatusElement || !returnAmountElement) {
+                console.error('One or more required elements not found');
+                return;
+            }
+
+            function calculateReturnAmount() {
+                // Use parseFloat to ensure we're working with numbers
+                const amount = parseFloat('{{ $depo->amount }}');
+                const fuel = parseFloat(fuelElement.value) || 0;
+                const late = parseFloat(lateElement.value) || 0;
+                const extend = parseFloat(extendElement.value) || 0;
+                const extendStatus = extendStatusElement.value;
+
+                let returnAmount = amount - fuel - late;
+
+                if (extendStatus === 'Unpaid') {
+                    returnAmount -= extend;
+                }
+
+                // Use toFixed(2) to round to 2 decimal places, common for currency
+                returnAmountElement.value = returnAmount;
+
+                console.log('Return Amount:', returnAmount);
+            }
+
+            // Calculate initially
+            calculateReturnAmount();
+
+            // Recalculate when any input changes
+            [fuelElement, lateElement, extendElement, extendStatusElement].forEach(element => {
+                element.addEventListener('input', calculateReturnAmount);
+            });
+        });
+    </script>
 @endsection

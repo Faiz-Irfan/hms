@@ -132,7 +132,7 @@
 
                                         <div class="col-md-6">
                                             <label class="form-label" for="file">Fuel</label><br>
-                                            <input type="file" class="form-control" id="fuel" name="fuel">
+                                            <input type="file" class="form-control" id="img_fuel" name="img_fuel">
                                         </div>
                                     </div>
                                 </div>
@@ -155,14 +155,5 @@
 @endsection
 
 @section('script')
-    <script>
-        var slider = document.getElementById("fuel");
-        var output = document.getElementById("demo");
-        output.innerHTML = slider.value; // Display the default slider value
-
-        // Update the current slider value (each time you drag the slider handle)
-        slider.oninput = function() {
-            output.innerHTML = this.value;
-        }
-    </script>
+    <script></script>
 @endsection

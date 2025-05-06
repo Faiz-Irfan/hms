@@ -40,7 +40,6 @@ class InspectionController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        // dd($data);
         $createdData = $this->inspectionService->addInspection($data);
         // dd($createdData);
         return redirect()->route('rental.index')->with('success','Inspection Created');   
@@ -72,7 +71,7 @@ class InspectionController extends Controller
         //         $gambar->$key = 'null'; // Replace with your desired default value
         //     }
         // }
-        
+        return response()->json($inspection);
         // return response()->json($gambar);
         return view('rental.inspection.show', compact('depo','depositId','id','preinspection','inspection','type'));
     }
