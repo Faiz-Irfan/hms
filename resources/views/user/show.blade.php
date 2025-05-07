@@ -20,6 +20,18 @@
                             <input type="text" class="form-control" id="email" name="email"
                                 value="{{ $user->email }}" required>
                         </div>
+                        <div class="col-12 mb-3">
+                            <label for="role">Role</label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="">Select Role</option>
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role->id }}"
+                                        {{ $user->roles->first()->id == $role->id ? 'selected' : '' }}>
+                                        {{ $role->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="pt-2">
                             <button type="submit" class="btn btn-primary">Update User</button>
                         </div>

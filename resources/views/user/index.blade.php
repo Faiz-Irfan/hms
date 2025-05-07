@@ -17,6 +17,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Name</th>
+                                    <th>Role</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -25,6 +26,7 @@
                                     <tr>
                                         <td>{{ $item->id }}</td>
                                         <td>{{ $item->name }}</td>
+                                        <td>{{ $item->roles->first()->name ?? 'No Role' }}</td>
                                         <td>
                                             <div class="row">
                                                 {{-- <div class="col">
