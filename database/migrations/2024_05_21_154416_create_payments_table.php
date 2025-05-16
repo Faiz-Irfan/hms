@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->string('invoice_id', 255)->unique();
-            $table->date('payment_date');
+            $table->date('payment_date')->nullable();
             $table->enum('payment_method', ['Cash', 'Transfer', 'QR']);
             $table->enum('payment_status', ['paid', 'unpaid', 'partially_paid']);
             $table->float('rental_amount',  8, 2);
