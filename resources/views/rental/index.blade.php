@@ -114,8 +114,15 @@
                                                             href="{{ route('rental.show', $item->id) }}">Show</a>
                                                         <a class="dropdown-item"
                                                             href="{{ route('rental.edit', $item->id) }}">Edit</a>
-                                                        <a class="dropdown-item"
-                                                            href="{{ route('rental.destroy', $item->id) }}">Delete</a>
+                                                        {{-- <a class="dropdown-item"
+                                                            href="{{ route('rental.destroy', $item->id) }}">Delete</a> --}}
+                                                        <form action="{{ route('rental.destroy', $item->id) }}"
+                                                            method="POST" class="d-inline delete-form">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="button" class="dropdown-item delete-btn"> Delete
+                                                            </button>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </td>
@@ -140,5 +147,27 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+    <script>
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const form = this.closest('form');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This action cannot be undone.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it!',
+                    reverseButtons: true,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
     </script>
 @endsection

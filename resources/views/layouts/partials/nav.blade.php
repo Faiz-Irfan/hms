@@ -211,15 +211,17 @@
                   </a>
               </li>
               <li class="nav-item">
-                  <a class="nav-link collapsed" href="{{ route('user.index') }}">
-                      <i class="bi bi-person"></i>
-                      <span>User</span>
-                  </a>
-              </li>
-              <li class="nav-item">
                   <a class="nav-link collapsed" href="{{ route('customer.index') }}">
                       <i class="bi bi-people-fill"></i>
                       <span>Customer</span>
+                  </a>
+              </li>
+          @endif
+          @if ($role == 'Admin' || $role == 'Management')
+              <li class="nav-item">
+                  <a class="nav-link collapsed" href="{{ route('user.index') }}">
+                      <i class="bi bi-person"></i>
+                      <span>User</span>
                   </a>
               </li>
           @endif

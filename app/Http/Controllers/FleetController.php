@@ -103,7 +103,7 @@ class FleetController extends Controller
 
         // Get all fleets
         $allFleets = Fleet::pluck('license_plate', 'id');
-
+        // $allFleets = Fleet::all();
         // Get rented fleet IDs within the selected time range
         $rentedFleetIds = Rental::where(function ($query) use ($pickupDateTime, $returnDateTime) {
             $query->whereRaw("CONCAT(pickup_date, ' ', pickup_time) <= ?", [$returnDateTime->format('Y-m-d H:i:s')])
@@ -112,6 +112,13 @@ class FleetController extends Controller
 
         // Filter out rented fleets
         $availableFleets = $allFleets->except($rentedFleetIds->toArray());
+        // $availableFleets = $allFleets->whereNotIn('id', $rentedFleetIds)
+        // ->mapWithKeys(function ($fleet) {
+        //     return [$fleet->id => [
+        //         'model' => $fleet->model,
+        //         'license_plate' => $fleet->license_plate
+        //     ]];
+        // });
 
         // Return the available fleets as JSON
         return response()->json($availableFleets);
@@ -122,4 +129,17 @@ class FleetController extends Controller
         $fleet = Fleet::findOrFail($id);
         return response()->json($fleet);
     }
+
+    public function toggleStatus($id)
+    {
+        $fleet = Fleet::findOrFail($id);
+        $fleet->status = !$fleet->status;
+        $fleet->save();
+
+        return response()->json([
+            'success' => true,
+            'status' => $fleet->status
+        ]);
+    }
+
 }

@@ -463,7 +463,4 @@
             }, 300); // 300ms debounce delay
         });
     </script>
-    <script>
-        console.log('hehe');
-    </script>
 @endsection

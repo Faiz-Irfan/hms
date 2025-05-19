@@ -17,8 +17,11 @@ class PaymentService
     {
         // dd($data);
         if ($file) {
-            $filename = 'payment/' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move('payment', $filename);
+            // $filename = 'payment/' . time() . '.' . $file->getClientOriginalExtension();
+            // $file->move('payment', $filename);
+            $path = $file->store('receipts', 'private');
+            $filename = basename($path);
+
             // $file->move('public/payment', $filename);
         } else {
             $filename = null;
@@ -41,7 +44,8 @@ class PaymentService
     function generateInvoiceNumber()
     {
         $year = Carbon::now()->year; // Get the current year
-        $prefix = 'Hasta'; // Fixed prefix
+        $month = Carbon::now()->month; // Get the current month
+        $prefix = 'HASTA/INV'; // Fixed prefix
 
         // Get the last created payment to determine the next incremental number
         $lastPayment = Payment::orderBy('id', 'desc')->first();
@@ -56,6 +60,6 @@ class PaymentService
         // dd($nextInvoiceNumber);
 
         // Combine everything to form the invoice number
-        return $year . '-' . $prefix . '-' . $nextInvoiceNumber;
+        return $year .'-'. $month . '-' . $prefix . $nextInvoiceNumber;
     }
 }

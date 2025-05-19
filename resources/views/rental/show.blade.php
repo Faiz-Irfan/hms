@@ -41,6 +41,7 @@
                         <form action="" method="post">
                             @csrf
                             <div class="row">
+                                <p> <b>Staff Incharge :</b> {{ $rental->staff->name }}</p>
                                 <input type="hidden" class="" id="staff_id" name="staff_id"
                                     value="{{ $userId }}">
                                 <input type="hidden" class="" id="customer_id" name="customer_id" value="">

@@ -25,20 +25,6 @@ class UserController extends Controller
         $staffRole = Role::create(['name' => 'Staff']);
     }
 
-    public function assignRole(){
-        $user = User::find(3); // Get the user you want to assign the role to
-        // dd($user);
-        // echo json_encode($user);
-        // Assign Admin role to the user
-        // $user->assignRole('Admin');
-
-        // Assign Manager role to the user
-        $user->assignRole('Staff');
-
-        // You can also assign multiple roles to a user
-        // $user->assignRole('Top', 'Staff');
-    }
-
     public function createPermission(){
         $permission = Permission::create(['name' => 'edit articles']);
     }
@@ -48,13 +34,12 @@ class UserController extends Controller
     }
 
     public function index(){
-        $users = User::all();
-
+        $users = User::with('roles')->get();
+        
         return view('user.index')->with('users', $users);
     }
 
-    public function create()
-    {
+    public function create(){
         $roles = DB::table('roles')->get();
         return view('user.create', compact('roles'));
     }
@@ -71,38 +56,54 @@ class UserController extends Controller
 
         $data = $request->all();
 
-        $user = new User();
-        $user->name = $data['name'];
-        $user->email = $data['email'];
-        $user->password = Hash::make($data['password']);
-        $user->save();
+        // $user = new User();
+        // $user->name = $data['name'];
+        // $user->email = $data['email'];
+        // $user->password = Hash::make($data['password']);
+        // $user->save();
 
-        $user->assignRole($data['role']);
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+         ]);
+         
+
+        // activity()->log('Look mum, I logged something');
+
+        $role = Role::findByName($data['role']);
+        $user->assignRole($role->name);
 
         return redirect()->route('user.index')
         ->with('success', 'User created successfully.');
     }
 
     public function show($id){
-        $user = User::find($id);
-        return view('user.show', compact('user'));
+        $user = User::with('roles')->findOrFail($id);
+        $roles = Role::all(); // Get all available roles
+        return view('user.show', compact('user', 'roles'));
     }
-
-    // public function edit($id){
-    //     $user = User::find($id);
-    //     return view('user.edit', compact('user'));
-    // }
 
     public function update(Request $request, $id){
         $request->validate([
-            'name' => 'required|max:255',
-            'email' => 'required|max:255',
+            'name' => 'required',
+            'email' => 'required|email',
+            'role' => 'required|exists:roles,id'
         ]);
 
-        $user = User::find($id);
-        $user->update($request->all());
-        return redirect()->route('user.index')
-        ->with('success', 'User updated successfully.');
+        // dd($request->all());
+
+        $user = User::findOrFail($id);
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        // Update role
+        $role = Role::findById($request->role);
+        $user->syncRoles($role->name);
+
+        return redirect()->route('user.index')->with('success', 'User updated successfully');
     }
 
     public function destroy($id){
@@ -112,19 +113,16 @@ class UserController extends Controller
         ->with('success', 'User deleted successfully');
     }
 
-    public function login(){
-        return view('client.login');
+    public function log(){
+        $logs = \Spatie\Activitylog\Models\Activity::all();
+        return view('user.log', compact('logs'));
     }
 
-     public function register(Request $request){
-        $validated = $request->validate([
-            'name' => 'required|max:255',
-            'email' => 'required|unique:users|required',
-            'matric' => 'required',
-            'password' => 'required',
-        ]);
-        // dd($validated);
-        return view('client.register');
+    public function logDelete($id){
+        $log = \Spatie\Activitylog\Models\Activity::find($id);
+        $log->delete();
+        return redirect()->route('user.log')
+        ->with('success', 'Log deleted successfully');
     }
     
 }

@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->app->bind(HttpException::class, function ($exception) {
+            if ($exception->getStatusCode() === 403) {
+                return redirect('/'); // Change to your desired route
+            }
+    
+            return Response::make(view('errors.403'), 403);
+        });
     }
 }

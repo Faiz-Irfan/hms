@@ -19,6 +19,7 @@
   <!-- DataTables JS -->
   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
+
   <script>
       // Session timeout settings
       const sessionLifetime = {{ config('session.lifetime') }}; // Lifetime in minutes

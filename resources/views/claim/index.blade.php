@@ -24,6 +24,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Category</th>
+                                <th>Detail</th>
                                 <th>Amount</th>
                                 <th>Status</th>
                                 <th>Payment Date</th>
@@ -31,9 +32,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @php
-                                // dd($claims)
-                            @endphp
                             @foreach ($claims as $item)
                                 <tr>
                                     <td>{{ $item->claim_id }}</td>
@@ -48,6 +46,7 @@
                                             <span class="badge bg-dark">Staff Claims</span>
                                         @endif
                                     </td>
+                                    <td>{{ $item->date }} <br> {{ $item->details }}</td>
                                     <td>{{ $item->amount }}</td>
                                     <td>
                                         @if ($item->status == 'approved')

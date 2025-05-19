@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('license_plate');
             $table->string('color');
             $table->string('transmission');
-            $table->string('status');
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->string('calendar');
             $table->timestamps();
         });

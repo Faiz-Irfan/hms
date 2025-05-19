@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\RentalService;
 use Spatie\Browsershot\Browsershot;
+use Illuminate\Support\Facades\Response;
 
 class PaymentController extends Controller
 {
@@ -36,8 +37,6 @@ class PaymentController extends Controller
         return $pdf->stream('invoice.pdf');
 
         // return view('rental.invoice', ['rental' => $rental]);
-
-
     }
 
     public function createAgreement($id)
@@ -52,11 +51,16 @@ class PaymentController extends Controller
         // return view('rental.agreement-form', ['rental' => $rental, 'duration' => $interval]);
 
         $pdf = Pdf::loadView('rental.agreement-form', ['rental' => $rental, 'duration' => $interval])->setPaper('a4', 'portrait');
-        return $pdf->stream('invoice.pdf');
+        return $pdf->stream('agreement.pdf');
 
         // return view('rental.invoice', ['rental' => $rental]);
     }
 
+    public function createInspection()
+    {
+        $path = storage_path('app/public/inspection-form.pdf');
+        return Response::file($path);
+    }
     /**
      * Store a newly created resource in storage.
      */

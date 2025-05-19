@@ -39,6 +39,8 @@ class DepositController extends Controller
         ->select('deposits.*')
         ->get();
 
+        // dd($deposit);
+
         $pending = $this->getPending();
         // return response()->json($pending);
         return view('deposit.index')->with(compact('deposit', 'pending'));
@@ -80,10 +82,10 @@ class DepositController extends Controller
         return view('deposit.show', compact('depo'));
     }
 
-    public function edit($id){
-        $depo = Deposit::find($id);
-        return view('deposit.edit', compact('depo'));
-    }
+    // public function edit($id){
+    //     $depo = Deposit::find($id);
+    //     return view('deposit.edit', compact('depo'));
+    // }
 
     public function update(Request $request, $id){
         $request->validate([
@@ -92,6 +94,7 @@ class DepositController extends Controller
             'late' => 'required|max:255',
             'extend' => 'required|max:255',
             'return_date' => 'nullable',
+            'return_remark' => 'nullable',
         ]);
         // dd('hm');
         $depo = Deposit::find($id);

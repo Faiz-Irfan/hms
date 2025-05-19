@@ -19,6 +19,7 @@
             @endif
             @php
                 $userId = session('user_id');
+                $role = session('role');
             @endphp
             <form action="{{ route('deposit.update', $depo->id) }}" method="POST">
                 @csrf
@@ -72,6 +73,13 @@
                             <input type="date" name="return_date" class="form-control mt-2"
                                 value="{{ $depo->return_date }}">
                         </li>
+                        @if ($role == 'Admin' || $role == 'Management')
+                            <li class="list-group-item">
+                                <strong>Return Remark:</strong>
+                                <input type="text" name="return_remark" id="return_remark" class="form-control mt-2"
+                                    value="{{ $depo->return_remark }}">
+                            </li>
+                        @endif
                         <li class="list-group-item">
                             <strong>Return Amount:</strong>
                             <input type="number" name="return_amount" id="return_amount" class="form-control mt-2"
@@ -88,59 +96,59 @@
                     @endif
                     <div class="text-center pt-2">
                         <button type="submit" class="btn btn-primary">Update</button>
-                        <a href="{{ url()->previous() }}" class="btn btn-warning">Back</a>
+                        <a href="{{ route('deposit.index') }}" class="btn btn-warning">Back</a>
                     </div>
                 </div>
             </form>
 
         </div>
+    </div>
+@endsection
 
-    @endsection
+@section('script')
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure all elements are loaded before running the script
+            const fuelElement = document.getElementById('fuel');
+            const lateElement = document.getElementById('late');
+            const extendElement = document.getElementById('extend');
+            const extendStatusElement = document.getElementById('extend_status');
+            const returnAmountElement = document.getElementById('return_amount');
 
-    @section('script')
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Ensure all elements are loaded before running the script
-                const fuelElement = document.getElementById('fuel');
-                const lateElement = document.getElementById('late');
-                const extendElement = document.getElementById('extend');
-                const extendStatusElement = document.getElementById('extend_status');
-                const returnAmountElement = document.getElementById('return_amount');
+            if (!fuelElement || !lateElement || !extendElement || !extendStatusElement || !returnAmountElement) {
+                console.error('One or more required elements not found');
+                return;
+            }
 
-                if (!fuelElement || !lateElement || !extendElement || !extendStatusElement || !returnAmountElement) {
-                    console.error('One or more required elements not found');
-                    return;
+            function calculateReturnAmount() {
+                // Use parseFloat to ensure we're working with numbers
+                const amount = parseFloat('{{ $depo->amount }}');
+                const fuel = parseFloat(fuelElement.value) || 0;
+                const late = parseFloat(lateElement.value) || 0;
+                const extend = parseFloat(extendElement.value) || 0;
+                const extendStatus = extendStatusElement.value;
+
+                let returnAmount = amount - fuel - late;
+
+                if (extendStatus === 'Unpaid') {
+                    returnAmount -= extend;
                 }
 
-                function calculateReturnAmount() {
-                    // Use parseFloat to ensure we're working with numbers
-                    const amount = parseFloat('{{ $depo->amount }}');
-                    const fuel = parseFloat(fuelElement.value) || 0;
-                    const late = parseFloat(lateElement.value) || 0;
-                    const extend = parseFloat(extendElement.value) || 0;
-                    const extendStatus = extendStatusElement.value;
+                // Use toFixed(2) to round to 2 decimal places, common for currency
+                returnAmountElement.value = returnAmount;
 
-                    let returnAmount = amount - fuel - late;
+                console.log('Return Amount:', returnAmount);
+            }
 
-                    if (extendStatus === 'Unpaid') {
-                        returnAmount -= extend;
-                    }
+            // Calculate initially
+            calculateReturnAmount();
 
-                    // Use toFixed(2) to round to 2 decimal places, common for currency
-                    returnAmountElement.value = returnAmount;
-
-                    console.log('Return Amount:', returnAmount);
-                }
-
-                // Calculate initially
-                calculateReturnAmount();
-
-                // Recalculate when any input changes
-                [fuelElement, lateElement, extendElement, extendStatusElement].forEach(element => {
-                    element.addEventListener('input', calculateReturnAmount);
-                });
+            // Recalculate when any input changes
+            [fuelElement, lateElement, extendElement, extendStatusElement].forEach(element => {
+                element.addEventListener('input', calculateReturnAmount);
             });
-        </script>
-    @endsection
+        });
+    </script>
+@endsection

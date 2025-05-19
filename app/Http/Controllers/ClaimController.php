@@ -39,9 +39,8 @@ class ClaimController extends Controller
                 'users.name as user_name',
             )
             ->get();
-        // return response()->json($claims);
-        // $claims = Claim::paginate(5);
-        // $claims = $this->claimService->listClaim($user_id);
+     
+            $claims = $claims->sortByDesc('date');
 
         return view('claim.index')->with('claims', $claims);
     }
@@ -99,7 +98,7 @@ class ClaimController extends Controller
                 'amount' => 'required',
                 'plate_number' => 'required',
                 'date-claim' => 'required',
-                'receipt' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+                'receipt' => 'required|file|mimes:pdf,jpg,jpeg,png|max:8000',
             ]);
 
             $data = $request->all();

@@ -127,7 +127,7 @@ class RentalController extends Controller
             $query->where('fleet_id', $request->car_id);
         }
 
-        $rentals = $query->orderBy('pickup_date', 'desc')->get();
+        $rentals = $query->orderBy('created_at', 'desc')->get();
 
         return view('rental.index')->with(['rentals' => $rentals, 'cars' => $car]);
     }

@@ -67,7 +67,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label for="ic" class="form-label">IC Number/Passport </label>
-                                            <input type="number" placeholder="000627101198" class="form-control"
+                                            <input type="text" placeholder="000627101198" class="form-control"
                                                 name="ic" id="ic"
                                                 value="{{ old('ic', $rental->customer->ic) }}">
                                             @error('ic')

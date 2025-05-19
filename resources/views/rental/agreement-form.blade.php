@@ -93,7 +93,8 @@
                         {{-- <div style="text-align: center">202001003057 (1359376T) KPK/LN 10181</div> --}}
                         <div>Invoice No. : {{ $rental->payment->invoice_id }} </div>
                         <div>Model & Plate No. : {{ $rental->fleet->model }} {{ $rental->fleet->license_plate }}</div>
-                        <div>Rental Date & Time : {{ $rental->pickup_date }} {{ $rental->pickup_time }}</div>
+                        <div>Rental Date & Time : {{ $rental->pickup_date }} {{ $rental->pickup_time }} to
+                            {{ $rental->return_date }} {{ $rental->return_time }}</div>
 
                         <div style="font-style: bold; text-align:just">Rates</div>
                         <div style="text-align:justify">
@@ -105,7 +106,7 @@
                             Rates are in Ringgit Malaysia (RM).
                         </div>
 
-                        <table>
+                        {{-- <table>
                             <div style="text-align: right">Table 1: Price List Hasta</div>
                             <tr>
                                 <th>HOUR</th>
@@ -127,7 +128,7 @@
                                 <td>80</td>
                                 <td>110</td>
                             </tr>
-                        </table>
+                        </table> --}}
 
                         <div style="font-style: bold">Driver's Age and License Requirements</div>
                         <div style="text-align:justify">

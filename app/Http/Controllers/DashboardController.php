@@ -69,22 +69,16 @@ class DashboardController extends Controller
             'return_time' => 'required',
         ]);
 
-        $pickup = $request->pickup_date . ' ' . $request->pickup_time;
-        $return = $request->return_date . ' ' . $request->return_time;
-
-        // Get all fleet IDs that are already booked for this period
-        $bookedFleetIds = Rental::where(function($query) use ($pickup, $return) {
-            $query->where(function($q) use ($pickup, $return) {
-                $q->where('pickup_date', '<=', $pickup)
-                ->where('return_date', '>=', $pickup);
-            })->orWhere(function($q) use ($pickup, $return) {
-                $q->where('pickup_date', '<=', $return)
-                ->where('return_date', '>=', $return);
-            });
+        $pickupDateTime = Carbon::createFromFormat('Y-m-d H:i', $request->pickup_date . ' ' . $request->pickup_time);
+        $returnDateTime = Carbon::createFromFormat('Y-m-d H:i', $request->return_date . ' ' . $request->return_time);
+  
+        $rentedFleetIds = Rental::where(function ($query) use ($pickupDateTime, $returnDateTime) {
+            $query->whereRaw("CONCAT(pickup_date, ' ', pickup_time) <= ?", [$returnDateTime->format('Y-m-d H:i:s')])
+                ->whereRaw("CONCAT(return_date, ' ', return_time) >= ?", [$pickupDateTime->format('Y-m-d H:i:s')]);
         })->pluck('fleet_id');
 
         // Get available fleets
-        $availableFleets = Fleet::whereNotIn('id', $bookedFleetIds)->get();
+        $availableFleets = Fleet::whereNotIn('id', $rentedFleetIds)->get();
 
         // Get all data needed for dashboard
         $data = $this->getDashboardData();

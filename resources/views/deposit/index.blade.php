@@ -68,6 +68,10 @@
                                             @else
                                                 <span class="badge bg-warning">Pending</span>
                                             @endif
+                                            @if ($item->return_remark)
+                                                <br>
+                                                {{ $item->return_remark }}
+                                            @endif
                                         </td>
                                         <td>
                                             <form action="{{ route('deposit.updateStatus', $item->id) }}" method="POST">
@@ -87,7 +91,7 @@
                                                     <button type="submit" name="return_status" value="pending"
                                                         class="btn btn-sm btn-warning"
                                                         {{ $item->return_status === 'pending' ? 'disabled' : '' }}>
-                                                        Pending
+                                                        Hutang
                                                     </button>
                                                 </div>
                                             </form>
@@ -121,12 +125,12 @@
             </div>
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Pending Deposits</h5>
+                    <h5 class="card-title">Pending Deposits (Hutang)</h5>
                     <div class="table-responsive">
                         <table id="tableData" class="datatable table">
                             <thead>
                                 <tr>
-                                    {{-- <th>No.</th> --}}
+                                    <th>ID</th>
                                     <th>Pickup Date</th>
                                     <th>Fleet</th>
                                     <th>Customer</th>
@@ -140,8 +144,10 @@
                             </thead>
                             <tbody>
                                 @foreach ($pending as $item)
+                                    {{-- @dd($item) --}}
                                     <tr>
                                         {{-- <td>{{ $loop->iteration }}</td> --}}
+                                        <td>{{ $item->id }}</td>
                                         <td>{{ $item->rentals->pickup_date }}</td>
                                         @if ($item->rentals)
                                             <td>
@@ -180,6 +186,11 @@
                                             @else
                                                 <span class="badge bg-warning">Pending</span>
                                             @endif
+                                            <br>
+                                            @if ($item->return_remark)
+                                                <strong>Return Remark:</strong><br>
+                                                {{ $item->return_remark }}
+                                            @endif
                                         </td>
                                         <td>
                                             <form action="{{ route('deposit.updateStatus', $item->id) }}" method="POST">
@@ -199,7 +210,7 @@
                                                     <button type="submit" name="return_status" value="pending"
                                                         class="btn btn-sm btn-warning"
                                                         {{ $item->return_status === 'pending' ? 'disabled' : '' }}>
-                                                        Pending
+                                                        Hutang
                                                     </button>
                                                 </div>
                                             </form>

@@ -142,7 +142,7 @@
                     <!-- End Customers Card -->
 
                     <!-- Available Fleet -->
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="card recent-sales overflow-auto">
                             <div class="card-body">
                                 <h5 class="card-title">Fleet Available <span>| Today</span></h5>
@@ -174,7 +174,7 @@
                     <!-- End Available Fleet -->
 
                     <!-- Check Fleet Availability -->
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="card recent-sales overflow-auto">
                             <div class="card-body">
                                 <h5 class="card-title">Check Fleet Availability <span>| Today</span></h5>
@@ -282,9 +282,11 @@
                                             {{-- {{ $item }} --}}
                                             <tr>
                                                 <th scope="row"><a href="#">{{ $loop->index + 1 }}</a></th>
-                                                <td>{{ $item->customer->name }}</td>
-                                                <td><a href="#"
-                                                        class="text-primary">{{ $item->fleet->license_plate }}</a>
+                                                <td><a
+                                                        href="{{ route('rental.show', [$item->id]) }}">{{ $item->customer->name }}</a>
+                                                </td>
+                                                <td>{{ $item->fleet->model }} -
+                                                    {{ $item->fleet->license_plate }}
                                                 </td>
                                                 <td>{{ \Carbon\Carbon::parse($item->pickup_time)->format('h:i A') }}</td>
                                                 <td>
@@ -339,9 +341,10 @@
                                             {{-- {{ $item }} --}}
                                             <tr>
                                                 <th scope="row"><a href="#">{{ $loop->index + 1 }}</a></th>
-                                                <td>{{ $item->customer->name }}</td>
-                                                <td><a href="#"
-                                                        class="text-primary">{{ $item->fleet->license_plate }}</a>
+                                                <td><a href="{{ route('rental.show', [$item->id]) }}"
+                                                        class="text-primary">
+                                                        {{ $item->customer->name }}</a></td>
+                                                <td>{{ $item->fleet->model }} - {{ $item->fleet->license_plate }}
                                                 </td>
                                                 <td>{{ \Carbon\Carbon::parse($item->return_time)->format('h:i A') }}</td>
                                                 <td>

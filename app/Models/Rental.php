@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Rental extends Model
 {
     use HasFactory;
+    use LogsActivity;
 
       protected $fillable = [
         'customer_id',
@@ -29,6 +32,13 @@ class Rental extends Model
         'total_amount',
         'note',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+        ->logFillable()
+        ->setDescriptionForEvent(fn(string $eventName) => "Rental has been {$eventName}");
+    }
 
      public function customer()
     {
