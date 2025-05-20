@@ -16,13 +16,19 @@ class ReportController extends Controller
     public function index()
     {
         
-        $sales_by_month = Rental::join('payments', 'rentals.payment_id', '=', 'payments.id')
-        ->selectRaw('YEAR(rentals.pickup_date) as year, MONTHNAME(rentals.pickup_date) as month, SUM(payments.rental_amount) as total')
-        ->whereYear('pickup_date', Carbon::now()->year)
-        ->groupBy('year', 'month')
+       $sales_by_month = Rental::join('payments', 'rentals.payment_id', '=', 'payments.id')
+        ->selectRaw('
+            YEAR(rentals.pickup_date) as year,
+            MONTH(rentals.pickup_date) as month_number,
+            MONTHNAME(rentals.pickup_date) as month,
+            SUM(payments.rental_amount) as total
+        ')
+        ->whereYear('rentals.pickup_date', Carbon::now()->year)
+        ->groupBy('year', 'month_number', 'month')
         ->orderBy('year')
-        ->orderByRaw('MONTH(pickup_date)')
+        ->orderBy('month_number')
         ->get();
+
 
         $sales_by_car = Rental::join('payments', 'rentals.payment_id', '=', 'payments.id')
         ->join('fleets', 'rentals.fleet_id', '=', 'fleets.id')

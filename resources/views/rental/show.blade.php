@@ -24,7 +24,7 @@
                                     <i class="bi bi-grip-vertical"></i>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    {{-- <a class="dropdown-item" href="claim/view/{{ $item->id }}">View</a> --}}
+                                    <!-- {{-- <a class="dropdown-item" href="claim/view/{{ $item->id }}">View</a> --}} -->
                                     <a class="dropdown-item" href="{{ route('invoice.create', $rental->id) }}">Invoice</a>
                                     <a class="dropdown-item" href="{{ route('agreement.create', $rental->id) }}">Rental
                                         Agreement</a>

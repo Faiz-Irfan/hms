@@ -154,10 +154,12 @@ class RentalController extends Controller
         $fileDepo = $request->file('deposit_proof');
 
         $depositRequest['updated_by'] = $user_id;
+        // dd($customerRequest['ic']);
 
-        $customer = DB::table('customers')
-                    ->where('ic', $customerRequest['ic'])
-                    ->first();
+        $customer = Customer::where('ic', $customerRequest['ic'])->first();
+        // $customer = Customer::get();
+
+        // dd($customer);
 
         if($customer){
             //store rental only
@@ -172,6 +174,8 @@ class RentalController extends Controller
             $rental = $this->rentalService->storeRental($rentalRequest);
            
         }else{
+
+            // dd('store new customer');
             //store rental and customer
             $deposit = $this->depositService->addDeposit($depositRequest,$fileDepo);
             $payment = $this->paymentService->storePayment($paymentRequest, $filePay);
@@ -189,7 +193,7 @@ class RentalController extends Controller
         }
 
         
-        Mail::to('faizirfan@hastatravel.com')->send(new NewRentalNotification($rental));
+        // Mail::to('faizirfan@hastatravel.com')->send(new NewRentalNotification($rental));
     
         return redirect()->route('rental.index')
         ->with('success', 'Rental created successfully.');

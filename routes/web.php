@@ -84,15 +84,16 @@ Route::middleware(['auth', 'role:Admin|Management|Staff'])->group(function () {
     Route::put('/rental/{id}', [RentalController::class, 'update'])->name('rental.update');
     Route::get('/rental/{id}/delete', [RentalController::class, 'destroy'])->name('rental.destroy');
 
-    Route::get('/inspection/create/{id}/{type}', [InspectionController::class, 'create'])->name('inspection.create');
-    // Route::post('/inspection', [InspectionController::class, 'store'])->name('inspection.store');
+ Route::get('/inspection/create/{id}/{type}', [InspectionController::class, 'create'])->name('inspection.create');
     Route::post('/inspection', [InspectionController::class, 'store'])->name('inspection.store');
     Route::get('/inspection/{id}/{type}', [InspectionController::class, 'show'])->name('inspection.show');
+
 
     //Invoice
     Route::get('/invoice', [PaymentController::class, 'download'])->name('invoice.download');
     Route::get('/invoice/{id}', [PaymentController::class, 'create'])->name('invoice.create');
     Route::get('/agreement/{id}', [PaymentController::class, 'createAgreement'])->name('agreement.create');
+    Route::get('/inspection', [PaymentController::class, 'createInspection'])->name('inspectionform.create');
 
     //Customer
     Route::get('/customer', [CustomerController::class, 'index'])->name('customer.index');
