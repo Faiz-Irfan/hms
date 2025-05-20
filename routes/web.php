@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Exports\ExportDeposit;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\TodoController;
 
 
 Route::get('/', function () {
@@ -116,6 +117,12 @@ Route::middleware(['auth', 'role:Admin|Management|Staff'])->group(function () {
     Route::get('/export', [ExportController::class, 'export'])->name('export.users');
     // web.php
     Route::get('/autocomplete/customers', [CustomerController::class, 'autocomplete'])->name('customers.autocomplete');
+
+    // Todo Module
+    Route::get('/todos', [TodoController::class, 'index'])->name('todos.index');
+    Route::post('/todos', [TodoController::class, 'store'])->name('todos.store');
+    Route::put('/todos/{todo}', [TodoController::class, 'update'])->name('todos.update');
+    Route::delete('/todos/{todo}', [TodoController::class, 'destroy'])->name('todos.destroy');
 });
 
 Route::middleware(['auth','role:Admin|Management'])->group(function () {
@@ -131,6 +138,8 @@ Route::middleware(['auth','role:Admin|Management'])->group(function () {
     // Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/user/{id}', [UserController::class, 'update'])->name('user.update');
     Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('user.destroy');
+
+    Route::get('/activity-log', [UserController::class, 'log'])->name('log.index');
 });
 
 Route::middleware('auth')->group(function () {
