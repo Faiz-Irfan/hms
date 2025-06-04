@@ -36,9 +36,13 @@ class Rental extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logFillable()
-        ->setDescriptionForEvent(fn(string $eventName) => "Rental has been {$eventName}");
+            ->logFillable()
+            ->setDescriptionForEvent(function(string $eventName) {
+                $customerName = $this->customer ? $this->customer->name : 'Unknown Customer';
+                return "Rental (ID: {$this->id}, Customer: {$customerName}) has been {$eventName}";
+            });
     }
+    
 
      public function customer()
     {
