@@ -13,6 +13,7 @@
                                     <th>User ID</th>
                                     <th>Action</th>
                                     <th>Timestamp</th>
+                                    <th>Details</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -21,7 +22,10 @@
                                         <td>{{ $log->id }}</td>
                                         <td>{{ $log->causer ? $log->causer->name : 'N/A' }}</td>
                                         <td>{{ $log->description }}</td>
-                                        <td>{{ $log->created_at }}</td>
+                                        <td>{{ $log->created_at->format('j M Y, H:i:s') }}</td>
+                                        <td>
+                                            <a href="{{ route('log.detail', $log->id) }}" class="btn btn-sm btn-info">View Details</a>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>

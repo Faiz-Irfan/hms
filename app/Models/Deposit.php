@@ -34,7 +34,12 @@ class Deposit extends Model
     {
         return LogOptions::defaults()
         ->logFillable()
-        ->setDescriptionForEvent(fn(string $eventName) => "Deposit has been {$eventName}");
+        ->setDescriptionForEvent(function(string $eventName) {
+            $rental = $this->rentals;
+            $customerName = $rental && $rental->customer ? $rental->customer->name : 'Unknown Customer';
+            $rentalId = $rental ? $rental->id : 'Unknown Rental';
+            return "Deposit for {$customerName} (Rental ID: {$rentalId}) has been {$eventName}";
+        });
     }
 
     public function rentals()

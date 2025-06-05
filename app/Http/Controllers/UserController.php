@@ -114,7 +114,7 @@ class UserController extends Controller
     }
 
     public function log(){
-        $logs = \Spatie\Activitylog\Models\Activity::all();
+        $logs = \Spatie\Activitylog\Models\Activity::orderBy('created_at', 'desc')->get();
         return view('user.log', compact('logs'));
     }
 
@@ -125,4 +125,9 @@ class UserController extends Controller
         ->with('success', 'Log deleted successfully');
     }
     
+    public function logDetail($id)
+    {
+        $log = \Spatie\Activitylog\Models\Activity::with('causer')->findOrFail($id);
+        return view('user.log-detail', compact('log'));
+    }
 }

@@ -42,7 +42,6 @@ class Rental extends Model
                 return "Rental (ID: {$this->id}, Customer: {$customerName}) has been {$eventName}";
             });
     }
-    
 
      public function customer()
     {
