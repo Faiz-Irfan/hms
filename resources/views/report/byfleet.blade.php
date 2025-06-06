@@ -6,8 +6,14 @@
         </div>
     @endif
     <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
+         <div class="col-lg-12">
+             <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Monthly Sales Report {{ $fleet->model }} {{ $fleet->license_plate }}</h5>
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+          <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Sales For {{ $fleet->model }} {{ $fleet->license_plate }}</h5>
                     <div class="table-responsive">
@@ -34,9 +40,69 @@
                             </tbody>
                         </table>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
+@endsection
+@section('script')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: @json($sales_by_month->pluck('month')),
+                    datasets: [{
+                        label: 'Sales (RM)',
+                        data: @json($sales_by_month->pluck('total')),
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Monthly Sales'
+                        },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'end',
+                            color: '#333',
+                            font: {
+                                weight: 'bold',
+                                size: 12
+                            },
+                            formatter: function(value) {
+                                return 'RM ' + value;
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Sales (RM)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Month'
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        });
+    </script>
 @endsection

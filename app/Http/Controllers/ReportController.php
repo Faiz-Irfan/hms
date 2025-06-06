@@ -37,7 +37,29 @@ class ReportController extends Controller
         ->groupBy('fleets.id', 'fleets.model', 'fleets.license_plate') // Added fleets.id to GROUP BY
         ->get();
 
-        return view('report.index',compact( 'sales_by_month', 'sales_by_car'));
+        // Weekly sales for current month
+        $currentYear = Carbon::now()->year;
+        $currentMonth = Carbon::now()->month;
+        $sales_by_week = [0, 0, 0, 0];
+        $rentals = Rental::join('payments', 'rentals.payment_id', '=', 'payments.id')
+            ->whereYear('rentals.pickup_date', $currentYear)
+            ->whereMonth('rentals.pickup_date', $currentMonth)
+            ->select('rentals.pickup_date', 'payments.rental_amount')
+            ->get();
+        foreach ($rentals as $rental) {
+            $day = Carbon::parse($rental->pickup_date)->day;
+            if ($day >= 1 && $day <= 7) {
+                $sales_by_week[0] += $rental->rental_amount;
+            } elseif ($day >= 8 && $day <= 14) {
+                $sales_by_week[1] += $rental->rental_amount;
+            } elseif ($day >= 15 && $day <= 21) {
+                $sales_by_week[2] += $rental->rental_amount;
+            } else {
+                $sales_by_week[3] += $rental->rental_amount;
+            }
+        }
+
+        return view('report.index', compact('sales_by_month', 'sales_by_car', 'sales_by_week'));
     }
 
     public function byfleet($id)
@@ -56,8 +78,24 @@ class ReportController extends Controller
                 'rental_amount' => $rental->payment->rental_amount,
             ];
         });
-        // return response()->json($fleet);
-        return view('report.byfleet', compact('rentals', 'fleet'));
+
+        $sales_by_month = Rental::join('payments', 'rentals.payment_id', '=', 'payments.id')
+            ->where('rentals.fleet_id', $id)
+            ->selectRaw('
+            YEAR(rentals.pickup_date) as year,
+            MONTH(rentals.pickup_date) as month_number,
+            MONTHNAME(rentals.pickup_date) as month,
+            SUM(payments.rental_amount) as total,
+            COUNT(rentals.id) as rental_count
+            ')
+            ->groupBy('year', 'month_number', 'month')
+            ->orderBy('year')
+            ->orderBy('month_number')
+            ->get();
+        // return response()->json($sales_by_month);
+       
+        return view('report.byfleet', compact('rentals', 'fleet','sales_by_month'));
 
     }
+
 }
