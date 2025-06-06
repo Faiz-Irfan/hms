@@ -329,7 +329,17 @@
                                                     target="_blank">View</a>
                                             </div>
                                         @else
-                                            {{-- Add Proof Logic --}}
+                                            <div class="col-md-12">
+                                                <label for="inputNumber" class="col-sm col-form-label">Deposit
+                                                    Proof</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" name="deposit_proof" id="deposit_proof"
+                                                        type="file" id="formFile">
+                                                </div>
+                                                @error('deposit_proof')
+                                                    <div class="alert alert-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
                                         @endif
 
                                     </div>

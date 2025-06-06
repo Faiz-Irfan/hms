@@ -246,6 +246,7 @@
                             <div class="pt-2">
                                 {{-- <button type="submit" class="btn btn-primary">Submit</button> --}}
                                 <a href="{{ route('rental.index') }}" class="btn btn-primary">Back</a>
+                                <a href="{{ route('rental.edit', $rental->id) }}" class="btn btn-primary">Edit</a>
                             </div>
                         </form><!-- Vertical Form -->
 

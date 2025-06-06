@@ -323,7 +323,7 @@
                                             <div class="col-md-6">
                                                 <label for="depo_date" class="form-label">Depo Date</label>
                                                 <input type="date" class="form-control" name="depo_date"
-                                                    id="depo_date" value="{{ old('depo_date') }}">
+                                                    id="depo_date" value="{{ old('depo_date') }}" required>
                                                 @error('depo_date')
                                                     <div class="alert alert-danger">{{ $message }}</div>
                                                 @enderror
