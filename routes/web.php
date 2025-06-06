@@ -83,7 +83,7 @@ Route::middleware(['auth', 'role:Admin|Management|Staff'])->group(function () {
     Route::get('/rental/{id}', [RentalController::class, 'show'])->name('rental.show');
     Route::get('/rental/{id}/edit', [RentalController::class, 'edit'])->name('rental.edit');
     Route::put('/rental/{id}', [RentalController::class, 'update'])->name('rental.update');
-    Route::get('/rental/{id}/delete', [RentalController::class, 'destroy'])->name('rental.destroy');
+    Route::delete('/rental/{id}/delete', [RentalController::class, 'destroy'])->name('rental.destroy');
 
  Route::get('/inspection/create/{id}/{type}', [InspectionController::class, 'create'])->name('inspection.create');
     Route::post('/inspection', [InspectionController::class, 'store'])->name('inspection.store');
@@ -140,6 +140,7 @@ Route::middleware(['auth','role:Admin|Management'])->group(function () {
     Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('user.destroy');
 
     Route::get('/activity-log', [UserController::class, 'log'])->name('log.index');
+    Route::get('/log/{id}', [UserController::class, 'logDetail'])->name('log.detail');
 });
 
 Route::middleware('auth')->group(function () {
