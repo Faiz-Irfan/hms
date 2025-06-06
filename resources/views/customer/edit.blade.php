@@ -44,7 +44,7 @@
                                         </div>
                                         <div class="col-6">
                                             <label for="ic" class="form-label">IC Number/Passport </label>
-                                            <input type="number" placeholder="000627101198" class="form-control"
+                                            <input type="string" placeholder="000627101198" class="form-control"
                                                 name="ic" id="ic" value="{{ $customer->ic }}">
                                         </div>
                                         <div class="col-6">
