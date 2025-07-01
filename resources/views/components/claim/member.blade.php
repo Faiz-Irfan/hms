@@ -7,7 +7,7 @@
         <li class="list-group-item">Phone : {{ $customer->phone }}</li>
         <li class="list-group-item">Address : {{ $customer->address }}</li>
         <li class="list-group-item">Claim Details : {{ $claim->details }}</li>
-        <li class="list-group-item">Plate Number : {{ $claim->plate_number }}</li>
+        <li class="list-group-item">Plate Number : {{ $claim->fleet->plate_number ?? 'N/A' }}</li>
         <li class="list-group-item">Date : {{ $claim->date }}</li>
         <li class="list-group-item">Rental Amount : RM {{ $claim->rental_amount }}</li>
         @isset($claim->receipt)

@@ -123,15 +123,7 @@
                                             {{-- <td>{{ $item->id }}</td> --}}
                                             <td>{{ $item->user_name }}</td>
                                             <td>
-                                                @if ($item->category == 'members')
-                                                    <span class="badge bg-success">Members Rental</span>
-                                                @elseif($item->category == 'extra')
-                                                    <span class="badge bg-secondary">Extra Job</span>
-                                                @elseif($item->category == 'depo')
-                                                    <span class="badge bg-info">Morning Depo</span>
-                                                @elseif($item->category == 'claims')
-                                                    <span class="badge bg-dark">Staff Claims</span>
-                                                @endif
+                                                {{ $item->category }}
                                             </td>
                                             <td>{{ $item->details }}</td>
                                             <td>{{ $item->plate_number }}</td>

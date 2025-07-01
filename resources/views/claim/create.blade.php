@@ -248,9 +248,6 @@
             $('#date-claim').datepicker({
                 dateFormat: 'yy-mm-dd'
             }).val();
-
-
-
         });
     </script>
 @endsection

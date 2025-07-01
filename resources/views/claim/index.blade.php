@@ -36,7 +36,8 @@
                                 <tr>
                                     <td>{{ $item->claim_id }}</td>
                                     <td>
-                                        @if ($item->category == 'members')
+                                        {{ $item->category }}
+                                        {{-- @if ($item->category == 'members')
                                             <span class="badge bg-success">Members Rental</span>
                                         @elseif($item->category == 'extra')
                                             <span class="badge bg-secondary">Extra Job</span>
@@ -44,10 +45,11 @@
                                             <span class="badge bg-info">Morning Depo</span>
                                         @elseif($item->category == 'claims')
                                             <span class="badge bg-dark">Staff Claims</span>
-                                        @endif
+                                        @endif --}}
                                     </td>
-                                    <td>{{ $item->date }} <br> {{ $item->details }}</td>
-                                    <td>{{ $item->amount }}</td>
+                                    <td> {{ \Carbon\Carbon::parse($item->date)->format('j F Y h:i A') }} <br>
+                                        {{ $item->details }}</td>
+                                    <td>RM {{ $item->amount }}</td>
                                     <td>
                                         @if ($item->status == 'approved')
                                             <span class="badge bg-success">Approved</span>
@@ -57,7 +59,13 @@
                                             <span class="badge bg-warning">Pending</span>
                                         @endif
                                     </td>
-                                    <td>{{ $item->payment_date }}</td>
+                                    <td>
+                                        @if ($item->payment_date)
+                                            {{ \Carbon\Carbon::parse($item->payment_date)->format('j F Y h:i A') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-primary " type="button" id="dropdownMenuButton"
@@ -66,8 +74,8 @@
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                 {{-- <a class="dropdown-item" href="claim/view/{{ $item->id }}">View</a> --}}
-                                                {{-- <a class="dropdown-item"
-                                                    href="{{ route('claim.show', ['id' => $item->claim_id, 'category' => $item->category]) }}">View</a> --}}
+                                                <a class="dropdown-item"
+                                                    href="{{ route('claim.show', ['id' => $item->claim_id]) }}">View</a>
                                                 <a class="dropdown-item"
                                                     href="{{ route('claim.edit', ['id' => $item->claim_id]) }}">Edit</a>
                                                 <a class="dropdown-item"
