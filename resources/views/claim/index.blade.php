@@ -36,16 +36,15 @@
                                 <tr>
                                     <td>{{ $item->claim_id }}</td>
                                     <td>
-                                        {{ $item->category }}
-                                        {{-- @if ($item->category == 'members')
+                                        @if ($item->category == 'Members Rental' || $item->category == 'members')
                                             <span class="badge bg-success">Members Rental</span>
-                                        @elseif($item->category == 'extra')
+                                        @elseif($item->category == 'Extra Job' || $item->category == 'extra')
                                             <span class="badge bg-secondary">Extra Job</span>
-                                        @elseif($item->category == 'depo')
+                                        @elseif($item->category == 'Morning Depo' || $item->category == 'depo')
                                             <span class="badge bg-info">Morning Depo</span>
-                                        @elseif($item->category == 'claims')
+                                        @elseif($item->category == 'Staff Claims' || $item->category == 'claims')
                                             <span class="badge bg-dark">Staff Claims</span>
-                                        @endif --}}
+                                        @endif
                                     </td>
                                     <td> {{ \Carbon\Carbon::parse($item->date)->format('j F Y h:i A') }} <br>
                                         {{ $item->details }}</td>

@@ -28,19 +28,18 @@ class ClaimController extends Controller
             ->join('users', 'claims.staff_id', '=', 'users.id')
             ->where('users.id', '=', $user_id)
             ->select(
-                'claims.id as claim_id',
-                'claims.details',
-                'claims.category',
-                'claims.amount',
-                'claims.plate_number',
-                'claims.status',
-                'claims.date',
-                'claims.payment_date',
-                'users.name as user_name',
+            'claims.id as claim_id',
+            'claims.details',
+            'claims.category',
+            'claims.amount',
+            'claims.plate_number',
+            'claims.status',
+            'claims.date',
+            'claims.payment_date',
+            'users.name as user_name',
             )
+            ->orderByDesc('claims.date')
             ->get();
-     
-            $claims = $claims->sortByDesc('date');
 
         return view('claim.index')->with('claims', $claims);
     }
@@ -49,119 +48,125 @@ class ClaimController extends Controller
         $fleet = Fleet::all();
         $claimType = ClaimType::all();
         // dd($fleet);
-       return view('claim.create', compact('fleet','claimType'));
+       return view('claim.createnew', compact('fleet','claimType'));
     }
 
-    public function store(Request $request, $id){
-        $claim_type_id = $request->input('claim_type_id');
-        // dd($claim_type_id);
+    public function store(Request $request){
+        // Validate the request
+        $validated = $request->validate([
+            'category' => 'required|max:255',
+            'details' => 'required|max:255',
+            'staff_id' => 'required|exists:users,id',
+            'date' => 'required|date',
+            'plate_number' => 'nullable|string',
+            'amount' => 'nullable|numeric',
+            'rental_id' => 'nullable|exists:rentals,id',
+            'filepond.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:8000',
+        ]);
 
-        if($id == 'members'){
-            // $data = $request->all();
-           
-            $data = $request->validate([
-                'rental_id' => 'required|exists:rentals,id',
-                'details' => 'required',
-                'staff_id' => 'required',
-                'date' => 'required',
-            ]);
-
-            $data['category'] = 'members';
-            $claim = $this->claimService->storeClaimMember($data);
-
+        // Handle file uploads (store paths as JSON if multiple files)
+        $filePaths = [];
+        if ($request->hasFile('filepond')) {
+            foreach ($request->file('filepond') as $file) {
+                $filename = 'claims/' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('claims'), $filename);
+                $filePaths[] = $filename;
+            }
+            // Store as JSON in the receipt column
+            $validated['receipt'] = json_encode($filePaths);
         }
-        if($id == 'extra'){
-            $data = $request->all();
-            $date = $data['date-extra'];
-            $time = $data['time'];
-            $data['date'] = $date.' '. $time;
-            $data['category'] = 'extra';
 
-            $claim = $this->claimService->storeClaimMember($data);
-        }
-        if($id == 'depo'){
-             $request->validate([
-                'rental_id' => 'required|exists:rentals,id',
-                'amount' => 'required',
-                'date' => 'required',
-                'details' => 'required',
-            ]);
-
-            $data = $request->all();
-            $data['category'] = 'depo';
-            $claim = $this->claimService->storeClaimMember($data);
-        }
-        if($id == 'claim'){
-
-            $request->validate([
-                'details' => 'required|max:255',
-                'amount' => 'required',
-                'plate_number' => 'required',
-                'date-claim' => 'required',
-                'receipt' => 'required|file|mimes:pdf,jpg,jpeg,png|max:8000',
-            ]);
-
-            $data = $request->all();
-            
-            $data['category'] = 'claims';
-
-            $file = $request->file('receipt');
-
-            $claim = $this->claimService->storeClaim($data, $file);
-        }
+        $claim = Claim::create($validated);
 
         return redirect()->route('claim.index')
         ->with('success', 'Claim created successfully.');
     }
 
-    // public function show($id,$category){
-    //     dd('show');
-    //     $claim = Claim::find($id);
-    //     $rental_id = $claim->rental_id;
-    //     // return response()->json($claim);
-
-    //     switch($category){
-    //         case 'members':{
-    //             $claim = $this->claimService->getMember($rental_id);
-    //             $claim = $claim[0];
-    //             $customer_id = $claim->customer_id;
-    //             $customer = $this->claimService->getCustomer($customer_id);
-    //             // return response()->json($claim);
-    //             return view('claim.show', compact('claim','customer','category'));
-    //         }
-    //         case 'claims':
-    //             return view('claim.show', compact('claim','category'));
-    //         case 'extra':
-    //             return view('claim.show', compact('claim','category'));
-    //         case 'depo':
-    //             return view('claim.show', compact('claim','category'));
-    //     };
-       
-    //     // dd($claim);
-    //     // $fileUrl = asset($claim->receipt);
-    //     // $extension = pathinfo($claim->receipt, PATHINFO_EXTENSION);
-
-    //     // $claim->extension = $extension;
-
-    //     // return view('claim.show', compact('claim'));
-    // }
-
-    public function edit($id){
-        // dd('hm');
+    public function show($id){
+        // dd('show');
         $claim = Claim::find($id);
-        return view('claim.edit', compact('claim'));
+        // $rental_id = $claim->rental_id;
+        // return response()->json($claim);
+
+        // switch($category){
+        //     case 'members':{
+        //         $claim = $this->claimService->getMember($rental_id);
+        //         $claim = $claim[0];
+        //         $customer_id = $claim->customer_id;
+        //         $customer = $this->claimService->getCustomer($customer_id);
+        //         // return response()->json($claim);
+        //         return view('claim.show', compact('claim','customer','category'));
+        //     }
+        //     case 'claims':
+        //         return view('claim.show', compact('claim','category'));
+        //     case 'extra':
+        //         return view('claim.show', compact('claim','category'));
+        //     case 'depo':
+        //         return view('claim.show', compact('claim','category'));
+        // };
+       
+        // dd($claim);
+        // $fileUrl = asset($claim->receipt);
+        // $extension = pathinfo($claim->receipt, PATHINFO_EXTENSION);
+
+        // $claim->extension = $extension;
+
+        return view('claim.show', compact('claim'));
     }
 
-    public function update(Request $request, $id){
-        $request->validate([
-            'details' => 'required',
-            'plate_number' => 'required',
+    public function edit($id)
+    {
+        $claim = Claim::findOrFail($id);
+        $fleet = Fleet::all();
+        $claimType = ClaimType::all();
+        return view('claim.edit', compact('claim', 'fleet', 'claimType'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $claim = Claim::findOrFail($id);
+        $validated = $request->validate([
+            'details' => 'required|max:255',
+            'plate_number' => 'nullable|string',
+            'date' => 'required|date',
+            'amount' => 'nullable|numeric',
+            'filepond.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:8000',
         ]);
 
-        $claim = Claim::find($id);
-        $claim->update($request->all());
-        return redirect()->route('claim.index')
-        ->with('success', 'Claim updated successfully.');
+        // Handle file uploads (replace if new files uploaded)
+        if ($request->hasFile('filepond')) {
+            // Optionally: delete old files
+            if ($claim->receipt) {
+                $oldFiles = json_decode($claim->receipt, true);
+                if (is_array($oldFiles)) {
+                    foreach ($oldFiles as $oldFile) {
+                        $oldPath = public_path($oldFile);
+                        if (file_exists($oldPath)) {
+                            @unlink($oldPath);
+                        }
+                    }
+                } elseif ($claim->receipt) {
+                    $oldPath = public_path($claim->receipt);
+                    if (file_exists($oldPath)) {
+                        @unlink($oldPath);
+                    }
+                }
+            }
+            $filePaths = [];
+            foreach ($request->file('filepond') as $file) {
+                $filename = 'claims/' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('claims'), $filename);
+                $filePaths[] = $filename;
+            }
+            $validated['receipt'] = json_encode($filePaths);
+        }
+        // If no new files, keep the old receipt
+        else {
+            $validated['receipt'] = $claim->receipt;
+        }
+
+        $claim->update($validated);
+        return redirect()->route('claim.index')->with('success', 'Claim updated successfully.');
     }
 
     public function destroy($id){
@@ -210,6 +215,7 @@ class ClaimController extends Controller
                 'claims.payment_date',
                 'users.name as user_name',
             )
+            ->orderByDesc('claims.date')
             ->get();
 
             // return response()->json($claims);

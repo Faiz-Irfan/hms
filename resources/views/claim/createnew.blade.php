@@ -38,7 +38,7 @@
                 @php
                     $userId = session('user_id');
                 @endphp
-                <form action="{{ route('claim.store', ['id' => 'members']) }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('claim.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" class="" id="staff_id" name="staff_id" value="{{ $userId }}">
                     <div class="col-md-6">
