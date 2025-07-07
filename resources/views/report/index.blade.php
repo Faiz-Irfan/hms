@@ -16,10 +16,21 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Weekly Sales Report</h5>
+                    <div class="mb-3">
+                        <label for="monthFilter" class="form-label">Select Month:</label>
+                        <select id="monthFilter" class="form-select"
+                            style="width:auto;display:inline-block">
+                            @foreach (range(1, 12) as $m)
+                                <option value="{{ $m }}"
+                                    @if (request('month', now()->month) == $m) selected @endif>{{ \Carbon\Carbon::create()->month($m)->format('F') }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <button id="filterBtn" class="btn btn-primary ms-2">Filter</button>
+                    </div>
                     <canvas id="weeklyChart"></canvas>
                 </div>
             </div>
-            
 
             <div class="card">
                 <div class="card-body">
@@ -66,8 +77,27 @@
 
                 </div>
             </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Export Sales</h5>
+                    <form action="{{ route('export.rental') }}" method="GET" class="row g-2 align-items-end mb-3">
+                        <div class="col-auto">
+                            <label for="start_date" class="form-label mb-0">Start Date:</label>
+                            <input type="date" name="start_date" id="start_date" class="form-control" required>
+                        </div>
+                        <div class="col-auto">
+                            <label for="end_date" class="form-label mb-0">End Date:</label>
+                            <input type="date" name="end_date" id="end_date" class="form-control" required>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-success">Export Sales</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
+
 @endsection
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -188,6 +218,13 @@
                     }
                 },
                 plugins: [ChartDataLabels]
+            });
+
+            document.getElementById('filterBtn').addEventListener('click', function() {
+                const month = document.getElementById('monthFilter').value;
+                const url = new URL(window.location.href);
+                url.searchParams.set('month', month);
+                window.location.href = url.toString();
             });
         });
     </script>
