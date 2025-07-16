@@ -88,17 +88,35 @@ class DepositController extends Controller
     // }
 
     public function update(Request $request, $id){
-        $request->validate([
+        $validated = $request->validate([
             'fuel' => 'required|max:255',
             'extend_status' => 'required',
             'late' => 'required|max:255',
             'extend' => 'required|max:255',
             'return_date' => 'nullable',
             'return_remark' => 'nullable',
+            'return_amount' => 'nullable|numeric',
+            'remarks' => 'nullable|max:255',
+            'return_status' => 'required|in:pending,approve,decline',
+            'filepond.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:8000',
+            'updated_by' => 'nullable|max:255',
         ]);
         // dd('hm');
         $depo = Deposit::find($id);
-        $depo->update($request->all());
+
+         // Handle file uploads (store paths as JSON if multiple files)
+        $filePaths = [];
+        if ($request->hasFile('filepond')) {
+            foreach ($request->file('filepond') as $file) {
+                $filename = 'deposit/' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('deposit'), $filename);
+                $filePaths[] = $filename;
+            }
+            // Store as JSON in the receipt column
+            $validated['return_proof'] = json_encode($filePaths);
+        }
+
+        $depo->update($validated);
 
         // return redirect()->route('deposit.show',$id)
         return redirect()->back()

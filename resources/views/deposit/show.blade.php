@@ -21,10 +21,11 @@
                 $userId = session('user_id');
                 $role = session('role');
             @endphp
-            <form action="{{ route('deposit.update', $depo->id) }}" method="POST">
+            <form action="{{ route('deposit.update', $depo->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="updated_by" value="{{ $userId }}">
-                <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
                     <ul class="list-group">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <strong>Amount:</strong>
@@ -69,18 +70,6 @@
                                 value="{{ $depo->remarks }}">
                         </li>
                         <li class="list-group-item">
-                            <strong>Return Date:</strong>
-                            <input type="date" name="return_date" class="form-control mt-2"
-                                value="{{ $depo->return_date }}">
-                        </li>
-                        @if ($role == 'Admin' || $role == 'Management')
-                            <li class="list-group-item">
-                                <strong>Return Remark:</strong>
-                                <input type="text" name="return_remark" id="return_remark" class="form-control mt-2"
-                                    value="{{ $depo->return_remark }}">
-                            </li>
-                        @endif
-                        <li class="list-group-item">
                             <strong>Return Amount:</strong>
                             <input type="number" name="return_amount" id="return_amount" class="form-control mt-2"
                                 value="{{ $depo->return_amount }}" readonly>
@@ -99,8 +88,68 @@
                         <a href="{{ route('deposit.index') }}" class="btn btn-warning">Back</a>
                     </div>
                 </div>
+                @if ($role == 'Admin' || $role == 'Management')
+                <div class="col-md-6">
+                    <h2>Admin</h2>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Return Remark:</strong>
+                            <input type="text" name="return_remark" id="return_remark" class="form-control mt-2"
+                                value="{{ $depo->return_remark }}">
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Return Date:</strong>
+                            <input type="date" name="return_date" class="form-control mt-2"
+                                value="{{ $depo->return_date }}">
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Return Status:</strong>
+                            <select name="return_status" id="return_status" class="form-select mt-2">
+                                <option value="approve" {{ $depo->return_status == 'approve' ? 'selected' : '' }}>Approve</option>
+                                <option value="decline" {{ $depo->return_status == 'decline' ? 'selected' : '' }}>Decline</option>
+                                <option value="pending" {{ $depo->return_status == 'pending' ? 'selected' : '' }}>Pending</option>
+                            </select>
+                        </li>
+                        <li class="list-group-item">
+                            @if ($depo->return_proof)
+                            @php $files = json_decode($depo->return_proof, true); @endphp
+                            @if (is_array($files))
+                                <ul>
+                                    @foreach ($files as $file)
+                                        <li>
+                                            <img src="{{ asset($file) }}" alt="" style="max-width: 150px; max-height: 150px; object-fit: contain; display: block;"     data-bs-toggle="modal" data-bs-target="#imageModal"
+                                                class="enlarge-image"> 
+                                            <a href="{{ asset($file) }}" target="_blank">
+                                                {{ basename($file) }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <a href="{{ asset($depo->return_proof) }}" target="_blank">{{ basename($depo->return_proof) }}</a>
+                            @endif
+                        @else
+                                <label for="attachment" class="form-label">Attachment</label>
+                            <input type="file" class="my-pond" name="filepond[]" multiple />
+                        @endif
+                        
+                        </li>
+                    </ul>
+                </div>
+                @endif
+                </div>
             </form>
 
+        </div>
+    </div>
+     <!-- Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img src="" alt="" id="modalImage" class="img-fluid">
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -108,7 +157,41 @@
 @section('script')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link href="https://unpkg.com/filepond/dist/filepond.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
+    <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.js"></script>
+    <script src="https://unpkg.com/jquery-filepond/filepond.jquery.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('.enlarge-image');
+            const modalImage = document.getElementById('modalImage');
+
+            images.forEach(image => {
+                image.addEventListener('click', function() {
+                    modalImage.src = this.src;
+                    modalImage.alt = this.alt;
+                });
+            });
+        });
+    </script>
+    <script>
+        // Register FilePond plugins
+        $.fn.filepond.registerPlugin(FilePondPluginImagePreview);
+        // Initialize FilePond
+        $('.my-pond').filepond({
+            allowMultiple: true,
+            storeAsFile: true,
+        });
+        // Listen for addfile event
+        $('.my-pond').on('FilePond:addfile', function(e) {
+            console.log('file added event', e);
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             // Ensure all elements are loaded before running the script
             const fuelElement = document.getElementById('fuel');

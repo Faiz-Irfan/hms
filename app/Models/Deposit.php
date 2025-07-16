@@ -27,6 +27,7 @@ class Deposit extends Model
         'return_amount', 
         'remarks',
         'return_remark',
+        'return_proof',
         'updated_by',
     ];
 

@@ -30,10 +30,16 @@
                                 @foreach ($deposit as $item)
                                     <tr>
                                         {{-- <td>{{ $loop->iteration }}</td> --}}
-                                        <td>{{ $item->rentals->pickup_date }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->rentals->pickup_date)->translatedFormat('j F Y') }}</td>
                                         @if ($item->rentals)
                                             <td>
-                                                {{ $item->rentals ? $item->rentals->fleet->license_plate : '-' }}
+                                                @if ($item->rentals)
+                                                    <a href="{{ route('rental.show', $item->rentals->id) }}" target="_blank">
+                                                        {{ $item->rentals->fleet->license_plate }}
+                                                    </a>
+                                                @else
+                                                    -
+                                                @endif
                                             </td>
                                         @else
                                             <td>-</td>
