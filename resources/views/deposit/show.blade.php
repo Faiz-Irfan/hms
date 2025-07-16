@@ -111,28 +111,34 @@
                             </select>
                         </li>
                         <li class="list-group-item">
+                            <label for="attachment" class="form-label">Return Proof Attachment</label>
                             @if ($depo->return_proof)
-                            @php $files = json_decode($depo->return_proof, true); @endphp
-                            @if (is_array($files))
-                                <ul>
-                                    @foreach ($files as $file)
-                                        <li>
-                                            <img src="{{ asset($file) }}" alt="" style="max-width: 150px; max-height: 150px; object-fit: contain; display: block;"     data-bs-toggle="modal" data-bs-target="#imageModal"
-                                                class="enlarge-image"> 
-                                            <a href="{{ asset($file) }}" target="_blank">
-                                                {{ basename($file) }}
-                                            </a>
-                                        </li>
-                                    @endforeach
-                                </ul>
+                                @php $files = json_decode($depo->return_proof, true); @endphp
+                                <div class="mb-2">
+                                    <strong>Current Attachment(s):</strong>
+                                    <ul>
+                                        @if (is_array($files))
+                                            @foreach ($files as $file)
+                                                <li>
+                                                    <img src="{{ asset($file) }}" alt="" style="max-width: 150px; max-height: 150px; object-fit: contain; display: block;" data-bs-toggle="modal" data-bs-target="#imageModal" class="enlarge-image">
+                                                    <a href="{{ asset($file) }}" target="_blank">{{ basename($file) }}</a>
+                                                </li>
+                                            @endforeach
+                                        @else
+                                            <li>
+                                                <img src="{{ asset($depo->return_proof) }}" alt="" style="max-width: 150px; max-height: 150px; object-fit: contain; display: block;" data-bs-toggle="modal" data-bs-target="#imageModal" class="enlarge-image">
+                                                <a href="{{ asset($depo->return_proof) }}" target="_blank">{{ basename($depo->return_proof) }}</a>
+                                            </li>
+                                        @endif
+                                    </ul>
+                                </div>
+                                <div class="mb-2">
+                                    <input type="file" class="my-pond" name="filepond[]" multiple />
+                                    <small class="text-muted">Upload new file(s) to replace the current attachment(s).</small>
+                                </div>
                             @else
-                                <a href="{{ asset($depo->return_proof) }}" target="_blank">{{ basename($depo->return_proof) }}</a>
+                                <input type="file" class="my-pond" name="filepond[]" multiple />
                             @endif
-                        @else
-                                <label for="attachment" class="form-label">Attachment</label>
-                            <input type="file" class="my-pond" name="filepond[]" multiple />
-                        @endif
-                        
                         </li>
                     </ul>
                 </div>
